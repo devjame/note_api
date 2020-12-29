@@ -11,6 +11,10 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    @app.route("/", methods=['GET'])
+    def index():
+        return "<h2>Hello World</h2>"
+
     register_extensions(app)
     register_resources(app)
 
