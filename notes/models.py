@@ -10,13 +10,9 @@ class Notes(db.Model):
     body = db.Column(db.Text, nullable=False)
 
     created_at = db.Column(db.DateTime(), nullable=False,
-                           server_default=db.func.now())
+                           default=datetime.utcnow())
     updated_at = db.Column(db.DateTime(), nullable=False,
-                           server_default=db.func.now(), onupdate=db.func.now())
-
-    @classmethod
-    def get_all_note(cls):
-        return cls.query.filter_by(create_at).all()
+                           default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     @classmethod
     def get_by_id(cls, note_id):
