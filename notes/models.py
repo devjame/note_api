@@ -15,6 +15,10 @@ class Notes(db.Model):
                            server_default=db.func.now(), onupdate=db.func.now())
 
     @classmethod
+    def get_all_note(cls):
+        return cls.query.filter_by(create_at).all()
+
+    @classmethod
     def get_by_id(cls, note_id):
         return cls.query.filter_by(id=note_id).first()
 
