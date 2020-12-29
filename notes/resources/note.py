@@ -1,5 +1,6 @@
 from flask import request
 from flask_restful import Resource
+from marshmallow import ValidationError
 from http import HTTPStatus
 
 from api.notes.note_schemas import NoteSchema
@@ -12,22 +13,28 @@ note_list_schema = NoteSchema(many=True)
 class NoteListResource(Resource):
 
     def get(self):
+
         notes = Notes.query.all()
 
         return note_list_schema.dump(notes), HTTPStatus.OK
 
     def post(self):
+
         json_data = request.get_json()
+        if not json_data:
+            return {"message": "Not input data provided"}, HTTPStatus.NO_CONTENT
+        try:
 
-        data, errors = note_schema.load(data=json_data)
+            data = note_schema.load(data=json_data)
 
-        if errors:
-            return {"message": "Validations errors", 'errors': errors}, HTTPStatus.BAD_REQUEST
+        except ValidationError as err:
 
-        note = Notes(**data)
+            return {"message": "Validations errors", 'errors': err.messages}, HTTPStatus.BAD_REQUEST
+
+        note = Notes(title=data.get("title"), body=data.get("body"))
         note.save()
 
-        return note_schema.dump(note).data, HTTPStatus.OK
+        return note_schema.dump(note), HTTPStatus.OK
 
 
 class NoteResource(Resource):
@@ -44,10 +51,10 @@ class NoteResource(Resource):
 
         json_data = request.get_json()
 
-        data, errors = note_schema.load(data=json_data, partial=('title',))
-
-        if errors:
-            return {"message": "Validation errors", "errors": errors}, HTTPStatus.BAD_REQUEST
+        try:
+            data = note_schema.load(data=json_data, partial=('title',))
+        except ValidationError as err:
+            return {"message": "Validation errors", "errors": err.messages}, HTTPStatus.BAD_REQUEST
 
         note = Notes.get_by_id(note_id=note_id)
 
@@ -59,7 +66,7 @@ class NoteResource(Resource):
 
         note.save()
 
-        return note_schema.dump(note).data, HTTPStatus.OK
+        return note_schema.dump(note), HTTPStatus.OK
 
     def delete(self, note_id):
         note = Notes.get_by_id(note_id=note_id)
