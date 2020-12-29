@@ -10,8 +10,8 @@ class NoteSchema(Schema):
         validate.Length(max=200)])
     body = fields.String()
 
-    create_at = fields.DateTime(dump_only=True)
-    update_at = fields.DateTime(dump_only=True)
+    created_at = fields.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)
 
     @post_dump(pass_many=True)
     def wrap(self, data, many, **kwargs):
