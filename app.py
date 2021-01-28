@@ -1,19 +1,24 @@
 from flask import Flask
 from flask_restful import Api
 from flask_migrate import Migrate
+from flask_cors import CORS
 
-from config import Config
-from extensions import db
-from notes.models import Notes
-from notes.resources.note import NoteResource, NoteListResource
+from .config import settings
+from .extensions import db
+from .notes.models import Notes
+from .notes.resources.note import NoteResource, NoteListResource
 
 
-def create_app():
+def create_app(env_name='development'):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(settings[env_name])
 
     register_extensions(app)
     register_resources(app)
+
+    @app.route('/', methods=['GET'])
+    def home():
+        return '<h1 style="text-align: center; transform: translateY(50%); ">Welcome to my note API</h1>'
 
     @app.shell_context_processor
     def make_shell_context():
@@ -23,8 +28,8 @@ def create_app():
 
 
 def register_extensions(app):
+    CORS(app)
     db.init_app(app)
-    # ma.init_app(app)
     migrate = Migrate(app, db)
 
 
