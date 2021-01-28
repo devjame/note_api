@@ -3,8 +3,8 @@ from flask_restful import Resource
 from marshmallow import ValidationError
 from http import HTTPStatus
 
-from api.notes.note_schemas import NoteSchema
-from notes.models import Notes
+from ..note_schemas import NoteSchema
+from ..models import Notes
 
 note_schema = NoteSchema()
 note_list_schema = NoteSchema(many=True)
