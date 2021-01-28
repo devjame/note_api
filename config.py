@@ -1,11 +1,13 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+
+BASEDIR = os.path.dirname(__file__)
+load_dotenv(os.path.join(BASEDIR, '.env'))
+load_dotenv(os.path.join(BASEDIR, '.flaskenv'))
 
 
 class Config:
-    DEBUG = True
 
     DATABASE_USER = os.getenv("DB_USER")
     DATABASE_PASSWORD = os.getenv("DB_PASSWORD")
@@ -20,8 +22,14 @@ class Config:
 
 
 class DevConfig(Config):
-    pass
+    DEBUG = True
 
 
 class ProdConfig(Config):
     DEBUG = False
+
+
+settings = {
+    'development': DevConfig,
+    'production': ProdConfig
+}
