@@ -28,7 +28,7 @@ def create_app(env_name='development'):
 
 
 def register_extensions(app):
-    CORS(app)
+    CORS(app, resources={r'/*': {'origins': '*'}})
     db.init_app(app)
     migrate = Migrate(app, db)
 
